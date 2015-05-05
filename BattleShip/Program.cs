@@ -10,6 +10,8 @@ namespace BattleShip
     {
         static void Main(string[] args)
         {
+            Grid newGame = new Grid();
+            newGame.PlayGame();
         }
     }
     public class Point
@@ -44,10 +46,10 @@ namespace BattleShip
             Destroyer
         }
         //properties
-        ShipType Type { get; set; }
+        public ShipType Type { get; set; }
         public List<Point> OccpiedPoints { get; set; }
-        int Length { get; set; }
-        bool IsDestroyed
+        public int Length { get; set; }
+        public bool IsDestroyed
         {
             get
             {
@@ -77,8 +79,9 @@ namespace BattleShip
                     break;
             }
         }
-        class Grid
-        {
+    }
+       class Grid
+       {
             //enum
             enum PlaceShipDirection
             {
@@ -92,7 +95,11 @@ namespace BattleShip
             {
                 get
                 {
-                    return ListOfShips.Count() == ListOfShips.Where(x => x.IsDestroyed).Count();
+                    if (ListOfShips.Where(x => x.IsDestroyed).Count() == null)
+                    {
+                        return true;
+                    }
+                    return ListOfShips.Count() != ListOfShips.Where(x => x.IsDestroyed).Count();
                 }
             }
             int CombatRound { get; set; }
@@ -131,11 +138,9 @@ namespace BattleShip
                         {
                             Console.Write("[O]");
                         }
-                        Console.Write("\n");
-                        {
-
-                        }
+                        
                     }
+                    Console.Write("\n");
                 }
             }
             bool Target(int x, int y)
@@ -159,9 +164,45 @@ namespace BattleShip
                     return false;
                 }
             }
-            void PlayGame()
+            public void PlayGame()
             {
+                while (!AllShipsDestroyed)
+                {
+                    DisplayOcean();
+                    PlaceShip(ListOfShips [0], PlaceShipDirection.Vertical, 0, 0);
+                    PlaceShip(ListOfShips[1], PlaceShipDirection.Horizontal, 6, 5);
+                    PlaceShip(ListOfShips[2], PlaceShipDirection.Vertical, 7, 6);
+                    PlaceShip(ListOfShips[3], PlaceShipDirection.Vertical, 3, 4);
+                    PlaceShip(ListOfShips[4], PlaceShipDirection.Horizontal, 8, 8);
 
+                    //users x and y inputs
+                    string x = string.Empty;
+                    string y = string.Empty;
+                    int xInt = 0;
+                    int yInt = 0;
+                    Console.WriteLine("enter x coordinate");
+                    x = Console.ReadLine();
+                    if (int.TryParse(x, out xInt))
+                    {
+                        Console.WriteLine("enter y coordinate");
+                        y = Console.ReadLine();
+                        if (int.TryParse(y,out yInt))
+                        {
+                            Target(xInt, yInt);
+                            CombatRound++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("enter a valid y coordinate");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("enter a valid x coordinate");
+                    }
+                }
+                Console.WriteLine("You Sunk my battleship jerk! it took you {0} rounds" , CombatRound);
+                Console.ReadKey();
             }
             //constructor
             public Grid()
@@ -176,18 +217,18 @@ namespace BattleShip
                 }
                 List<Ship> ListOfShips = new List<Ship>();
                 //make one of each ship
-                Ship carrier = new Ship(ShipType.Carrier);
-                Ship battleship = new Ship(ShipType.Battleship);
-                Ship cruiser = new Ship(ShipType.Cruiser);
-                Ship submarine = new Ship(ShipType.Submarine);
-                Ship destroyer = new Ship(ShipType.Destroyer);
+                Ship carrier = new Ship(Ship.ShipType.Carrier);
+                Ship battleship = new Ship(Ship.ShipType.Battleship);
+                Ship cruiser = new Ship(Ship.ShipType.Cruiser);
+                Ship submarine = new Ship(Ship.ShipType.Submarine);
+                Ship destroyer = new Ship(Ship.ShipType.Destroyer);
                 ListOfShips.Add(carrier);
                 ListOfShips.Add(battleship);
                 ListOfShips.Add(cruiser);
                 ListOfShips.Add(submarine);
                 ListOfShips.Add(destroyer);
             }
-        }
-    }
+       }
+    
     
 }
